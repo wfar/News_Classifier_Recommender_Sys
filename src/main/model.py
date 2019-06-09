@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
-''' model.py contains the ML classifier(s) and corresponding
-    methods used for text classification.
+''' DataProcessor.py contains the singleton class to handle all data
+    used for training, testing the model as well as user input data
+    goes through here for vectorization and processing to be used and
+    stored
     
 '''
 
@@ -11,26 +13,23 @@ import sys
 import time
 import csv
 import json
+import pickle
 
 #third party mods
 import numpy as np
 import pandas as pd
 from sklearn import *
 
-# put nay changes to path here!!
-PATH_TO_HP = os.getcwd() + "\\huffpo\\News_Category_Dataset_v2.json" 
+#local mods
+import Classifier.py as CL
+import DataProcessor.py as DP
+
+# put any changes to path here!!
+PATH_TO_HP = os.getcwd() + "\\huffpo\\News_Category_Dataset_v2.json"
 
 
-__author_ = "{wfar}"
-__version__ = "{v1.0}"
+class Model:
 
+    def __init__(self):
 
-class Classifier:
-    
-
-    def __init__(self, model_type):
-        self.type = model_type
-        self.data = pd.read_json(PATH_TO_HP)
-        
-        
-    def 
+        pass
