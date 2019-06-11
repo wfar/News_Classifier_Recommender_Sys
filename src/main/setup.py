@@ -36,7 +36,7 @@ __version__ = "{v1.0}"
 def main():
 
     data_processor = DP.DataProcessor()
-    info = data_processor.get_model_info()
+    info = data_processor.get_data_info()
     print(len(info))
 
     NB_model = CL.Classifier('NB', info[0], info[1], info[2], info[3] )
@@ -49,7 +49,6 @@ def main():
     pickle.dump(LR_model, open(os.getcwd() + "\\LRModel.pkl","wb"))
 
     print("objects pickled")
-
 
 if __name__ == "__main__":
 

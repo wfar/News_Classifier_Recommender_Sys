@@ -39,28 +39,34 @@ class DataProcessor:
         self.encoder = LabelEncoder()  # label encoder object used throughout run time
         self.vect = TfidfVectorizer(analyzer='word', token_pattern=r'\w{1,}', max_features=100000)   # vecotizer object used throughout runtime
 
-        self.model_info = self.__setupClf()    # sets up all the data and create list of trining info for models to use
+        self.data_info = self.__setupClf()    # sets up all the data and create list of trining info for models to use
         
     #private method
     def __preprocess(self):
-        print("Start pp")
         data = data = pd.read_json(PATH_TO_HP, lines=True)                                           # read in the huffpost data
         data["text"] = data['headline'].map(str) + " " + data['short_description'].map(str)          # add a column text that combines headline and description columns
-        print("data read")
 
         X = data["text"]                                  # set X to hold the new txt column
         y = data['category'].apply(str)                   # set Y to hold the class label for the data category column)
 
-        print("x y created")
+        data.loc[data['category'] == 'ARTS', 'category'] = 'ARTS & CULTURE'           # combine arts and culture and arts to arts & culture
+        data.loc[data['category'] == 'CULTURE & ARTS', 'category'] = 'ARTS & CULTURE' # combine arts and culture and arts to arts & culture
+        data.loc[data['category'] == 'STYLE', 'category'] = 'STYLE & BEAUTY'          # combine style to style and beuaty
+
+        # atts hold the 17 class labels that are more generic thanthe more niche labels. I wanted the classifier to predict more generic topics (17 total)
+        atts = ['SCIENCE', 'RELIGION', 'TECH', 'ENVIRONMENT', 'HOME & LIVING', 'SPORTS', 'BUSINESS', 'TRAVEL', 'STYLE & BEAUTY', 'ENTERTAINMENT', 'POLITICS', 'FOOD & DRINK', 'CRIME', 'ARTS & CULTURE', 'COMEDY', 'WORLD NEWS', 'EDUCATION' ]
+        data = data.loc[data['category'].isin(atts)]   # updtae data so that it only has only the 17 class lables and its records
+
+
+        
         min_recs = min(data.groupby('category')['text'].nunique())          # find minimum number of records per class label
         balanced_data = data.groupby('category', as_index=False, group_keys=False).apply(lambda s: s.sample(min_recs + 10000,replace=True))   # randomly sameple (under and over) each class label so data is more balanced
         new_len_of_proc_data = len(balanced_data)       # save new number of records in data 
 
-        print("done resampling")
         
         X = balanced_data['text']                 # update and store the new X value
         y = balanced_data['category']             # update and store the new y value
-        print("done pp")
+        print("done preprocessing")
         return balanced_data, X, y
     
     def __splitData(self, X, y):
@@ -84,8 +90,8 @@ class DataProcessor:
         
         return y_train_enc, y_test_enc                     # return encoded class data for modeling
 
-    def __createDB(self, X, y):
-
+    def __saveData(self, X, y):
+        # no longer is use. Was used to store everything to db, but it was overkill (too large!)
         conn = db.connect(os.getcwd() + "\\data.db")
         X.to_sql("text", conn, if_exists='replace')
         y.to_sql("category", conn, if_exists='replace')
@@ -93,21 +99,17 @@ class DataProcessor:
 
 
     def __setupClf(self):
-
+        # runs during construction of dataprocessor object
         try:
             print("Start")
-            balanced_data, X, y = self.__preprocess()
-            print("one")
-            X_train, X_test, y_train, y_test = self.__splitData(X, y)
-            print("two")
-            y_train_enc, y_test_enc = self.__encodeLabels(y_train, y_test)
-            print("three")
-            X_train_tfidf, X_test_tfidf = self.__vectorize(X, X_train, X_test)
-            print("four")
-            self.__createDB(X, y)
+            balanced_data, X, y = self.__preprocess()   # preprocess data
+            X_train, X_test, y_train, y_test = self.__splitData(X, y)   # split data 
+            y_train_enc, y_test_enc = self.__encodeLabels(y_train, y_test)   # encode y variables
+            X_train_tfidf, X_test_tfidf = self.__vectorize(X, X_train, X_test)   # vectorize data
+            #self.__createDB(X, y)
             print("Done")
             
-            return [X_train_tfidf, y_train_enc, X_test_tfidf, y_test_enc]
+            return [X_train_tfidf, y_train_enc, X_test_tfidf, y_test_enc]   # return train test data for models
             
         except Exception as e:
             print("Error: ", e)
@@ -115,18 +117,18 @@ class DataProcessor:
 
 
     #public methods
-    def get_model_info(self):
+    def get_data_info(self):
 
-        return self.model_info    # get list of data for train/testing our models
+        return self.data_info    # get list of data for train/testing our models
     
     def input_vectorize(self, input_text):
 
-        ip_text_tfidf = self.vect.transform(input_text)
+        ip_text_tfidf = self.vect.transform(input_text)    # vectorizes using tf_idf the input string from user
 
         return ip_text_tfidf
 
     def decode_label(self, label):
 
-        return self.encoder.inverse_transform(label)       
+        return self.encoder.inverse_transform(label)       # decode output class prediction into string label to send back to user
 
         

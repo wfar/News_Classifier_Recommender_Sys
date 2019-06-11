@@ -38,7 +38,7 @@ class Classifier:
         if self.type == 'NB':
             self.model = MultinomialNB(alpha = 0.05)
         elif self.type == 'LR':
-            self.model = linear_model.LogisticRegression(multi_class='auto', solver='lbfgs')
+            self.model = linear_model.LogisticRegression(multi_class='auto')
         else:
             self.model = None
             return "Invalid Model type"
