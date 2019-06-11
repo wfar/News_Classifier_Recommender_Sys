@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+  <head>
+<style>
+.center {
+  margin: auto;
+  width: 60%;
+  border: 3px solid black;
+  padding: 10px;
+}
+.model_align {
+	margin: auto;
+	width: 50%;
+	border: 2px solid black;
+	padding: 25px;
+	text-align: center;
+}
+.spacer {
+	margin: auto;
+	width: 20%;
+	border: 2px solid white;
+	padding: 10px;
+	text-align: center;
+}
+.content {
+  display: flex;
+  justify-content: space-between;
+  max-width: 400px;
+  margin: 0 auto;
+  background: white;
+  padding: 10px 0;
+}
+
+span {
+  width: 50px;
+  height: 50px;
+  background: black;
+}
+#wrapper {
+    overflow: hidden; /* add this to contain floated children */
+	margin: auto;
+	width: 50%;
+	border: 2px solid black;
+	padding: 25px;
+	text-align: center;
+}
+#first {
+    width: 300px;
+    float:left; /* add this */
+    border: 1px;
+	display: inline-block;
+}
+#second {
+    border: 1px;
+	width: 300px;
+    float: right; /* add this */
+	display: inline-block;
+}
+
+</style>
+
+    <title>News Headline Classifier</title>
+	
+  </head>
+  
+  <body>
+  
+	<h2>
+		<p class="center" align="center">NEWS ARTICLE CLASSIFICATION BASED ON HEADLINES</p>
+	</h2>
+	
+	<form action="/result" method="POST">
+		<div id="wrapper" class="model_align">
+			<p align="center"><strong>SELECT MACHINE LEARNNG MODEL</strong></p>
+			<div id="first">
+				<h3>Naive Bayes</h3>
+				<input name="NB_check" type="checkbox" value="NB"> Select </button>
+				<button name="NB_info_button" type="submit" value="NB info">Info</button>
+			</div>
+			
+			<div id="second">
+				<h3>Logistic Regression</h3>
+				<input name="LR_check" type="checkbox" value="LR"> Select </button>
+				<button name="LR_info_button" type="submit" value="LR info"> Info </button>
+			</div>
+		</div>
+
+		<div id="wrapper" class="model_align">
+				<p align="center"><strong>ENTER HEADLINE</strong></p>
+				<textarea name="myTextBox" cols="50" rows="5" size="50">(50 words or less)</textarea>
+				<br />
+				<input type="submit" value="Submit" />
+			
+		</div>
+	</form>
+	
+  </body>
+  
+</html>
