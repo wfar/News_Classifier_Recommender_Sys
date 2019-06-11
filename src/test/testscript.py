@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
-''' setup.py contains the source code to create both the dataprocessor singleton
-    as well as the two ML models used for text classification. When ran, this file
-    pickles and saves the dp as well as the models and creates a database of the balanced
-    data. All are used on the web application.
+''' testscript.py contains the code to create all 3 models. Then using string input
+    of news headlines, run the model to test prediction. New input
+    can be added as text then passed through objects as shown in main().
     
 '''
 
